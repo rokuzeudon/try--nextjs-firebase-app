@@ -1,7 +1,15 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useAuthentication } from '../../hooks/authentication'
 import { User } from '../../models/User'
-import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
+import { FormEvent, useEffect, useState } from 'react'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  serverTimestamp,
+} from 'firebase/firestore'
 import Layout from '../../components/Layout'
 
 type Query = {
@@ -10,8 +18,32 @@ type Query = {
 
 export default function UserShow() {
   const [user, setUser] = useState<User>(null)
+  const [body, setBody] = useState('')
   const router = useRouter()
   const query = router.query as Query
+  const { user: currentUser } = useAuthentication()
+  const [isSending, setIsSending] = useState(false)
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const db = getFirestore()
+
+    setIsSending(true)
+
+    await addDoc(collection(db, 'questions'), {
+      senderUid: currentUser.uid,
+      receiverUid: user.uid,
+      body,
+      isReplied: false,
+      createdAt: serverTimestamp(),
+    })
+
+    setIsSending(false)
+
+    setBody('')
+    alert('質問を送信しました。')
+  }
 
   useEffect(() => {
     if (query.uid === undefined) {
@@ -43,17 +75,25 @@ export default function UserShow() {
           <div className="m-5">{user.name}さんに質問しよう！</div>
           <div className="row justify-content-center mb-3">
             <div className="col-12 col-md-6">
-              <form>
+              <form onSubmit={onSubmit}>
                 <textarea
                   className="form-control"
                   placeholder="おげんきですか？"
                   rows={6}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
                   required
                 ></textarea>
                 <div className="m-3">
-                  <button type="submit" className="btn btn-primary">
-                    質問を送信する
-                  </button>
+                  {isSending ? (
+                    <div className="spinner-border text-secondary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : (
+                    <button type="submit" className="btn btn-primary">
+                      質問を送信する
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
