@@ -123,7 +123,7 @@ export default function QuestionsShow() {
 
   useEffect(() => {
     loadData()
-  }, [routerQuery.id])
+  }, [query.id, user])
 
   return (
     <Layout>
