@@ -45,7 +45,11 @@ export default function Layout({ children }) {
                 <i className="material-icons">home</i>
               </a>
             </Link>
-            <i className="material-icons">person</i>
+            <Link href="/users/me">
+              <a>
+                <i className="material-icons">person</i>
+              </a>
+            </Link>
           </div>
         </div>
       </nav>
