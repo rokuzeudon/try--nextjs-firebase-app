@@ -5,6 +5,7 @@ export async function getServerSideProps({ query }) {
 }
 
 import Layout from '../../../components/Layout'
+import TwitterShareButton from '../../../components/TwitterShareButton'
 import Head from 'next/head'
 import { Answer } from '../../../models/Answer'
 import { Question } from '../../../models/Question'
@@ -52,6 +53,14 @@ export default function AnswersShow(props: Props) {
               <div className="card">
                 <div className="card-body text-left">{props.answer.body}</div>
               </div>
+
+              <div className="my-3 d-flex justify-content-center">
+                <TwitterShareButton
+                  url={`${process.env.NEXT_PUBLIC_WEB_URL}/answers/${props.answer.id}`}
+                  text={props.answer.body}
+                ></TwitterShareButton>
+              </div>
+
             </section>
           </>
         </div>

@@ -111,9 +111,21 @@ export default function QuestionsShow() {
       progress: undefined,
     })
 
+    await runTransaction(db, async (t) => {
+      t.set(answerRef, {
+        uid: user.uid,
+        questionId: question.id,
+        body,
+        createdAt: serverTimestamp(),
+      })
+      t.update(doc(questionsCollection, question.id), {
+        isReplied: true,
+      })
+    })
+
     const now = new Date().getTime()
     setAnswer({
-      id: '',
+      id: answerRef.id,
       uid: user.uid,
       questionId: question.id,
       body,
