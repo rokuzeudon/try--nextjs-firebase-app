@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 type Props = {
   url: string
   text: string
@@ -10,7 +12,7 @@ export default function TwitterShareButton(props: Props) {
 
   return (
     <a href={url} className="twitter-share-button" target="_blank" rel="noreferrer">
-      <img src="/images/Twitter_Logo_WhiteOnBlue.svg" width="24" height="24" alt=""/>
+      <Image src="/images/Twitter_Logo_WhiteOnBlue.svg" width="24" height="24" alt=""/>
       <span>シェア</span>
     </a>
   )

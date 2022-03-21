@@ -29,9 +29,11 @@ export default function Layout({ children }) {
       >
         <div className="container">
           <div className="mr-auto">
-            <a className="navbar-brand" href="/">
-              My質問サービス
-            </a>
+            <Link href="/">
+              <a className="navbar-brand">
+                My質問サービス
+              </a>
+            </Link>
           </div>
         </div>
       </nav>
