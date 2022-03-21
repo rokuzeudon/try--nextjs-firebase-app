@@ -11,6 +11,44 @@ registerFont(path.resolve('./fonts/ipaexg.ttf'), {
   family: 'ipagp',
 })
 
+type SeparatedText = {
+  line: string
+  remaining: string
+}
+
+
+function createTextLine(context, text: string): SeparatedText {
+  const maxWidth = 400
+
+  for (let i = 0; i < text.length; i++) {
+    const line = text.substring(0, i + 1)
+    if (context.measureText(line).width > maxWidth) {
+      return {
+        line,
+        remaining: text.substring(i + 1),
+      }
+    }
+  }
+
+  return {
+    line: text,
+    remaining: '',
+  }
+}
+
+function createTextLines(context, text: string): string[] {
+  const lines: string[] = []
+  let currentText = text
+
+  while (currentText !== '') {
+    const separatedText = createTextLine(context, currentText)
+    lines.push(separatedText.line)
+    currentText = separatedText.remaining
+  }
+
+  return lines
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const id = req.query.id as string
@@ -34,7 +72,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   context.fillStyle = '#424242'
   context.textAlign = 'center'
   context.textBaseline = 'middle'
-  context.fillText('testテスト', 100, 50)
+
+  const lines = createTextLines(context, question.body)
+  lines.forEach((line, index) => {
+    const y = 157 + 40 * (index - (lines.length - 1) / 2)
+    context.fillText(line, 300, y)
+  })
 
   const buffer = canvas.toBuffer()
 
